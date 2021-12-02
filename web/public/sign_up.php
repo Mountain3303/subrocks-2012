@@ -3,11 +3,16 @@
 <?php require_once($_SERVER['DOCUMENT_ROOT'] . "/s/classes/time_manip.php"); ?>
 <?php require_once($_SERVER['DOCUMENT_ROOT'] . "/s/classes/user_helper.php"); ?>
 <?php require_once($_SERVER['DOCUMENT_ROOT'] . "/s/classes/video_helper.php"); ?>
-
 <?php $__video_h = new video_helper($__db); ?>
 <?php $__user_h = new user_helper($__db); ?>
 <?php $__db_h = new db_helper(); ?>
 <?php $__time_h = new time_helper(); ?>
+<?php
+	$__server->page_embeds->page_title = "SubRocks - Sign Up";
+	$__server->page_embeds->page_description = "SubRocks is a site dedicated to bring back the 2012 layout of YouTube.";
+	$__server->page_embeds->page_image = "/yt/imgbin/full-size-logo.png";
+	$__server->page_embeds->page_url = "https://subrock.rocks/";
+?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -19,12 +24,25 @@
         <script>
             var yt = yt || {};yt.timing = yt.timing || {};yt.timing.tick = function(label, opt_time) {var timer = yt.timing['timer'] || {};if(opt_time) {timer[label] = opt_time;}else {timer[label] = new Date().getTime();}yt.timing['timer'] = timer;};yt.timing.info = function(label, value) {var info_args = yt.timing['info_args'] || {};info_args[label] = value;yt.timing['info_args'] = info_args;};yt.timing.info('e', "904821,919006,922401,920704,912806,913419,913546,913556,919349,919351,925109,919003,920201,912706");if (document.webkitVisibilityState == 'prerender') {document.addEventListener('webkitvisibilitychange', function() {yt.timing.tick('start');}, false);}yt.timing.tick('start');yt.timing.info('li','0');try {yt.timing['srt'] = window.gtbExternal && window.gtbExternal.pageT() ||window.external && window.external.pageT;} catch(e) {}if (window.chrome && window.chrome.csi) {yt.timing['srt'] = Math.floor(window.chrome.csi().pageT);}if (window.msPerformance && window.msPerformance.timing) {yt.timing['srt'] = window.msPerformance.timing.responseStart - window.msPerformance.timing.navigationStart;}    
         </script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <link id="www-core-css" rel="stylesheet" href="/yt/cssbin/www-core-vfluMRDnk.css">
         <link rel="stylesheet" href="/yt/cssbin/www-guide-vflx0V5Tq.css">
 		<link rel="stylesheet" href="/yt/cssbin/www-extra.css">
+		<link rel="stylesheet" href="/yt/password_strength.css">
+		<script src="/yt/password_strength_lightweight.js"></script>
         <script>
             if (window.yt.timing) {yt.timing.tick("ct");}    
         </script>
+		<style>
+			.password-verdict {
+				white-space: nowrap;
+				width: 266px;
+				display: inline-block;
+				background-color: aliceblue;
+				padding: 3px;
+				border-radius: 2px;
+			}
+		</style>
 	</head>
 	<body id="" class="date-20120930 en_US ltr   ytg-old-clearfix guide-feed-v2 " dir="ltr">
 		<form name="logoutForm" method="POST" action="/logout">
@@ -36,33 +54,46 @@
 			<div id="content-container">
 				<!-- begin content -->
 				<div id="content">
-                    <h3>Sign up for SubRocks</h3>
-                    <hr><br>
+                    <h2>Sign up to SubRocks</h2>
+                    <br>
 					<div class="www-left">
 						<b>Join the rockiest video-sharing community!</b><br>
 						Sign up now to get full access with your SubRocks account: <br><br>
 						<ul>
-							<li>&bull; &nbsp; Comment, rate, and make video responses to your favorite videos</li>
-							<li>&bull; &nbsp; Upload and share your videos with millions of other users</li>
-							<li>&bull; &nbsp; Save your favorite videos to watch and share later</li>
-							<li>&bull; &nbsp; Enter your videos into contests for fame and prizes</li>
-						</ul><br><br>
+							<li>• &nbsp; Comment, rate, and make video responses to your favorite videos</li>
+							<li>• &nbsp; Upload and share your videos with millions of other users</li>
+							<li>• &nbsp; Save your favorite videos to watch and share later</li>
+							<li>• &nbsp; Enter your videos into contests for fame and prizes</li>
+						</ul><br><a href="/sign_in">Already have an account?</a>
+
 					</div>
 					<div class="www-right">
 						<div class="sign-in-div">
 							<form method="POST" action="/d/signup">
-								<b>Username</b><br>
-								<span class="small-text">Your username must be less than 20 characters and contain no special characters</span><br>
-								<input class="yt-uix-form-input-text" type="text" name="username" placeholder="Username"><br><br>
-								<b>Password</b><br>
-								<span class="small-text">Your password must contain special characters. <br>Passwords are hashed with bcrypt.</span><br>
-								<input class="yt-uix-form-input-text" type="password" name="password" placeholder="Password"><br><br>
-                                <b>E-Mail</b><br>
-								<span class="small-text">Your email must be a valid email or you will not be able to comment, and upload!</span><br>
-								<input class="yt-uix-form-input-text" type="email" name="email" placeholder="E-Mail"><br><br>
+								
+								
+								<input class="yt-uix-form-input-text" type="text" name="username" placeholder="Username"><br>
+<span class="small-text" style="">Your username must be less than 20 characters and <br> contain no special characters.</span><br><br>
+								
+								
+								<div>
+								<input class="yt-uix-form-input-text" type="password" id="password" name="password" placeholder="Password">
+<span class="small-text">Your password must contain special characters. </span>
+								<script>
+									$('#password').pwstrength({
+										ui: { showVerdictsInsideProgressBar: true }
+									});
+								</script>
+								</div><br>
+								<script>$('#password').strength_meter();</script>
+                                
+								
 
-								<input class="yt-uix-button yt-uix-button-default" type="submit" value="Sign Up">
-							</form>
+								<input class="yt-uix-form-input-text" type="email" name="email" placeholder="E-Mail">
+<br><span class="small-text">Your email must be a valid email or you will not be able <br> to comment, and upload!</span><br><br>
+
+								<input class="yt-uix-button yt-uix-button-primary yt-uix-button-size-default" type="submit" value="Sign Up">
+							<input name="session_token" type="hidden" value="iz8jtUnR4Eomusl012h4goGYKHl8MTM0OTE0MDU3NEAxMzQ5MDU0MTc0"></form>
 						</div>
 					</div>
                 </div>
@@ -202,6 +233,7 @@
 			</div>
 		</div>
 		<!-- end page -->
+<script id="www-core-js" src="/yt/jsbin/www-core-vfl1pq97W.js" data-loaded="true"></script>
 		<script id="www-core-js" src="//s.ytimg.com/yt/jsbin/www-core-vfl1pq97W.js" data-loaded="true"></script>
 		<script>
 			yt.setConfig({

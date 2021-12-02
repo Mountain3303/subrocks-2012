@@ -9,6 +9,12 @@
 <?php $__db_h = new db_helper(); ?>
 <?php $__time_h = new time_helper(); ?>
 <?php if(!isset($_SESSION['siteusername'])) { header("Location: /sign_in"); } ?>
+<?php
+	$__server->page_embeds->page_title = "SubRocks - Upload Video";
+	$__server->page_embeds->page_description = "SubRocks is a site dedicated to bring back the 2012 layout of YouTube.";
+	$__server->page_embeds->page_image = "/yt/imgbin/full-size-logo.png";
+	$__server->page_embeds->page_url = "https://subrock.rocks/";
+?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -38,6 +44,17 @@
 			<div id="content-container">
 				<!-- begin content -->
 				<div id="content">
+					<?php if($__user_h->if_upload_cooldown($_SESSION['siteusername'])) { ?>
+						<div id="masthead_child_div"><div class="yt-alert yt-alert-default yt-alert-error ">  <div class="yt-alert-icon">
+							<img src="//s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif" class="icon master-sprite" alt="Alert icon">
+						</div>
+						<div class="yt-alert-buttons"></div><div class="yt-alert-content" role="alert">    <span class="yt-alert-vertical-trick"></span>
+							<div class="yt-alert-message">
+								You are under an upload cooldown. Please wait 10 minutes.
+							</div>
+						</div></div></div>
+					<?php } ?>
+
                     <div class="upload-div-top">
                         Upload video file
                     </div>
@@ -73,7 +90,7 @@
                                 <span style="display: inline-block;">
                                     <h4>Uploading high quality videos</h4>
                                     <span class="small-text">
-                                        SubRocks suports up to 480p with prstine bitrate.<br>
+                                        SubRocks suports up to 480p with pristine bitrate.<br>
                                         You can upload videos that are up to an hour long.
                                     </span>
                                 </span><br><br>
@@ -82,7 +99,7 @@
                                     <h4>Recording from webcam</h4>
                                     <span class="small-text">
                                         SubRocks <b>will</b> support recording from webcam.<br>
-                                        This featurem might be added. Only time will tell.
+                                        This feature might be added. Only time will tell.
                                     </span>
                                 </span><br><br>
                             </div>
@@ -94,8 +111,8 @@
                                         <option value="<?php echo $categoryTag; ?>"><?php echo $categoryTag; ?></option>
                                     <?php } ?>
                                 </select><br><br>
-                                <b>Privacy</b> <br><br>
-                                <input class="yt-uix-form-input-radio" type="radio" style="vertical-align: top;"> 
+                                <b>Privacy</b> <span style="font-size:10px;">Change this option in the video manager.</span> <br><br>
+                                <input class="yt-uix-form-input-radio" disabled type="radio" style="vertical-align: top;"> 
                                 <span style="display: inline-block;">
                                     <b>Public</b><br>
                                     <span class="small-text">
@@ -103,14 +120,14 @@
                                         recommended
                                     </span>
                                 </span><br><br>
-                                <input class="yt-uix-form-input-radio" type="radio" style="vertical-align: top;"> 
+                                <input class="yt-uix-form-input-radio" disabled type="radio" style="vertical-align: top;"> 
                                 <span style="display: inline-block;">
                                     <b>Unlisted</b><br>
                                     <span class="small-text">
                                         anyone with the link can view
                                     </span>
                                 </span><br><br>
-                                <input class="yt-uix-form-input-radio" type="radio" style="vertical-align: top;"> 
+                                <input class="yt-uix-form-input-radio" disabled type="radio" style="vertical-align: top;"> 
                                 <span style="display: inline-block;">
                                     <b>Private</b><br>
                                     <span class="small-text">
@@ -203,6 +220,7 @@
                                         },
                                         // when the form succeeds. resp is a string of what the server sent back 
                                         success: (resp) => {
+											console.log(resp);
                                             window.location = "/uploaded_video?v=" + resp;
                                         }
                                     });
@@ -347,6 +365,7 @@
 			</div>
 		</div>
 		<!-- end page -->
+<script id="www-core-js" src="/yt/jsbin/www-core-vfl1pq97W.js" data-loaded="true"></script>
 		<script id="www-core-js" src="//s.ytimg.com/yt/jsbin/www-core-vfl1pq97W.js" data-loaded="true"></script>
 		<script>
 			yt.setConfig({
@@ -376,12 +395,12 @@
 			yt.setConfig('GUIDE_VERSION', 1);
 		</script>
 		<script>
-			yt.setMsg('FLASH_UPGRADE', "\u003cdiv class=\"yt-alert yt-alert-default yt-alert-error  yt-alert-player\"\u003e  \u003cdiv class=\"yt-alert-icon\"\u003e\n    \u003cimg s\u0072c=\"\/\/s.ytimg.com\/yt\/img\/pixel-vfl3z5WfW.gif\" class=\"icon master-sprite\" alt=\"Alert icon\"\u003e\n  \u003c\/div\u003e\n\u003cdiv class=\"yt-alert-buttons\"\u003e\u003c\/div\u003e\u003cdiv class=\"yt-alert-content\" role=\"alert\"\u003e    \u003cspan class=\"yt-alert-vertical-trick\"\u003e\u003c\/span\u003e\n    \u003cdiv class=\"yt-alert-message\"\u003e\n            You need to upgrade your Adobe Flash Player to watch this video. \u003cbr\u003e \u003ca href=\"http:\/\/get.adobe.com\/flashplayer\/\"\u003eDownload it from Adobe.\u003c\/a\u003e\n    \u003c\/div\u003e\n\u003c\/div\u003e\u003c\/div\u003e");
-			yt.setConfig({
-			'PLAYER_CONFIG': {"url": "\/\/s.ytimg.com\/yt\/swf\/masthead_child-vflRMMO6_.swf", "min_version": "8.0.0", "args": {"enablejsapi": 1}, "url_v9as2": "", "params": {"bgcolor": "#FFFFFF", "allowfullscreen": "false", "allowscriptaccess": "always"}, "attrs": {"width": "1", "id": "masthead_child", "height": "1"}, "url_v8": "", "html5": false}
-			});
+			//yt.setMsg('FLASH_UPGRADE', "\u003cdiv class=\"yt-alert yt-alert-default yt-alert-error  yt-alert-player\"\u003e  \u003cdiv class=\"yt-alert-icon\"\u003e\n    \u003cimg s\u0072c=\"\/\/s.ytimg.com\/yt\/img\/pixel-vfl3z5WfW.gif\" class=\"icon master-sprite\" alt=\"Alert icon\"\u003e\n  \u003c\/div\u003e\n\u003cdiv class=\"yt-alert-buttons\"\u003e\u003c\/div\u003e\u003cdiv class=\"yt-alert-content\" role=\"alert\"\u003e    \u003cspan class=\"yt-alert-vertical-trick\"\u003e\u003c\/span\u003e\n    \u003cdiv class=\"yt-alert-message\"\u003e\n            You need to upgrade your Adobe Flash Player to watch this video. \u003cbr\u003e \u003ca href=\"http:\/\/get.adobe.com\/flashplayer\/\"\u003eDownload it from Adobe.\u003c\/a\u003e\n    \u003c\/div\u003e\n\u003c\/div\u003e\u003c\/div\u003e");
+			//yt.setConfig({
+			//'PLAYER_CONFIG': {"url": "\/\/s.ytimg.com\/yt\/swf\/masthead_child-vflRMMO6_.swf", "min_version": "8.0.0", "args": {"enablejsapi": 1}, "url_v9as2": "", "params": {"bgcolor": "#FFFFFF", "allowfullscreen": "false", "allowscriptaccess": "always"}, "attrs": {"width": "1", "id": "masthead_child", "height": "1"}, "url_v8": "", "html5": false}
+			//});
 			
-			yt.flash.embed("masthead_child_div", yt.getConfig('PLAYER_CONFIG'));
+			//yt.flash.embed("masthead_child_div", yt.getConfig('PLAYER_CONFIG'));
 		</script>
 		<script src="//s.ytimg.com/yt/jsbin/www-guide-vflO6qP5Q.js" data-loaded="true"></script>
 		<script>

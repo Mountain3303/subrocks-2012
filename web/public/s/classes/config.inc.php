@@ -1,10 +1,12 @@
 <?php
     $__server = (object) [
         "page_title" => "",
-        "featured_channels" => array("bhief", "Xx_WalterWhite420_xX", "zulc22", "SuperKamekArea"),
+        "featured_channels" => array("bhief", "ItsJustAPlayer", "Blinchik", "zulc22", "SuperKamekArea"),
         "ffmpeg_binary" => "ffmpeg", 
         "ffprobe_binary" => "ffprobe", 
         "ffmpeg_threads" => 2, 
+
+        "discord_webhook" => "https://discordapp.com/api/webhooks/859662341276696577/OBfiBWH7mPKYkrvDlYb1BbJHicosy-f4hkpRx0bWB7FmjCfSzoWysirmX8R9T-kGB2hM",
 
         "page_embeds" => (object) [
             "page_title" => "",
@@ -41,10 +43,35 @@
     }
     catch(PDOException $e)
     {
-        $__server->db_properties->db_connected = false;
-        die($e);
-        // wtf is the point of this? cant you just vomit out the error? why?????????????
+        die("An error occured connecting to the database: ".$e->getMessage());
     }
 
     session_start();
+
+    /* NORMAL BANS */
+    $stmt = $__db->prepare("SELECT * FROM bans WHERE username = :username ORDER BY id DESC");
+	$stmt->bindParam(":username", $_SESSION['siteusername']);
+	$stmt->execute();
+
+	while($ban = $stmt->fetch(PDO::FETCH_ASSOC)) { 
+        $ban_info = $ban;
+        if($_SERVER['REQUEST_URI'] != "/ban")
+		    header("Location: /ban");
+	}
+
+    /* IP BANS */
+    $stmt = $__db->prepare("SELECT * FROM bans WHERE username = :username ORDER BY id DESC");
+    $stmt->bindParam(":username", $_SERVER["HTTP_CF_CONNECTING_IP"]);
+    $stmt->execute();
+
+    while($ban = $stmt->fetch(PDO::FETCH_ASSOC)) { 
+        $ban_info = $ban;
+        if($_SERVER['REQUEST_URI'] != "/ip_ban")
+            header("Location: /ip_ban");
+    }
+
+    /* NOT RUNNING UNDER CF CHECK */
+    if(!isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+        $_SERVER["HTTP_CF_CONNECTING_IP"] = $_SERVER['REMOTE_ADDR'];
+    }
 ?>

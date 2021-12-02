@@ -9,6 +9,12 @@
 <?php $__db_h = new db_helper(); ?>
 <?php $__time_h = new time_helper(); ?>
 <?php if(!isset($_SESSION['siteusername'])) { header("Location: /sign_in"); } ?>
+<?php
+	$__server->page_embeds->page_title = "SubRocks - Personal Messages";
+	$__server->page_embeds->page_description = "SubRocks is a site dedicated to bring back the 2012 layout of YouTube.";
+	$__server->page_embeds->page_image = "/yt/imgbin/full-size-logo.png";
+	$__server->page_embeds->page_url = "https://subrock.rocks/";
+?>
 <!DOCTYPE html>
 <html dir="ltr">
 	<head>
@@ -23,7 +29,8 @@
 		<link id="www-core-css" rel="stylesheet" href="/yt/cssbin/www-core-vfluMRDnk.css">
 		<link rel="stylesheet" href="/yt/cssbin/www-guide-vflx0V5Tq.css">
 		<link rel="stylesheet" href="/yt/cssbin/www-videos-nav-vflYGt27y.css">
-        <link rel="stylesheet" href="/yt/cssbin/www-extra.css">
+        	<link rel="stylesheet" href="/yt/cssbin/www-extra.css">
+		<link rel="stylesheet" href="/yt/cssbin/www-inbox.css">
 		<script src="//s.ytimg.com/yt/jsbin/www-browse-vflu1nggJ.js" data-loaded="true"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 		<script>
@@ -153,12 +160,20 @@
                             <?php require($_SERVER['DOCUMENT_ROOT'] . "/s/mod/sidebar_inbox.php"); ?>
 							<div id="browse-main-column" style="float: right;margin: 0px 0 0 14px;" class="ytg-4col">
 								<div class="browse-collection  has-box-ad">
+								<h1 style="display:inline-block;">Your Personal Messages</h1>
+								<a href="/inbox/markasread" style="float: right;margin-top: 3px;">
+									<button class="yt-uix-button yt-uix-button-default">
+										Mark All as Read
+									</button>
+								</a><br>
+								<span style="font-size:11px;color:grey;">You currently have <b><?php echo $__user_h->fetch_unread_pms($_SESSION['siteusername']); ?></b> unread messages</span><br>
+								<hr><br>
                                 <?php
                                     $search = $_SESSION['siteusername'];
 
                                     $results_per_page = 12;
 
-                                    $stmt = $__db->prepare("SELECT * FROM pms WHERE touser = :username AND type = 'nm' ORDER BY id DESC");
+                                    $stmt = $__db->prepare("SELECT * FROM pms WHERE touser = :username AND type = 'nm' AND readed = 'y'  ORDER BY id DESC");
                                     $stmt->bindParam(":username", $_SESSION['siteusername']);
                                     $stmt->execute();
 
@@ -173,7 +188,7 @@
 
                                     $page_first_result = ($page - 1) * $results_per_page;  
 
-                                    $stmt6 = $__db->prepare("SELECT * FROM pms WHERE touser = :search AND type = 'nm' ORDER BY id DESC LIMIT :pfirst, :pper");
+                                    $stmt6 = $__db->prepare("SELECT * FROM pms WHERE touser = :search AND type = 'nm' AND readed = 'y'  ORDER BY id DESC LIMIT :pfirst, :pper");
                                     $stmt6->bindParam(":search", $search);
                                     $stmt6->bindParam(":pfirst", $page_first_result);
                                     $stmt6->bindParam(":pper", $results_per_page);
@@ -230,10 +245,18 @@
                                                     Reply
                                                 </button>
                                             </a>
+
+											<a href="/inbox/delete_message?id=<?php echo $inbox['id']; ?>">
+                                                <button class="yt-uix-button yt-uix-button-default">
+                                                    Delete
+                                                </button>
+                                            </a>
                                         </td>
                                         <td class="video-manager-stats" style="background: none;padding-left: 8px;">
                                             <h3><?php echo htmlspecialchars($inbox['subject']); ?></h3>
+											<p style="width:475px;">
                                             <?php echo $__video_h->shorten_description($inbox['message'], 300, true); ?>
+											</p>
                                             <?php if($inbox['video_attr_exists']) { ?>
                                                 <hr>
                                                 <ul>
@@ -434,6 +457,7 @@
 			<!-- end pagebottom -->
 		</div>
 		<!-- end page -->
+<script id="www-core-js" src="/yt/jsbin/www-core-vfl1pq97W.js" data-loaded="true"></script>
         <script id="www-core-js" src="/yt/jsbin/www-core-vfl1pq97W.js" data-loaded="true"></script>
 		<script>yt.www.thumbnaildelayload.init(0);</script>
 		<script>

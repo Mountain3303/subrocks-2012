@@ -15,35 +15,12 @@
         return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
     }
 
-        if(isset($_POST['layout'])) { 
-            $stmt = $__db->prepare("UPDATE users SET layout = :layout WHERE username = :username");
-            $stmt->bindParam(":layout", $_POST['layout']);
-            $stmt->bindParam(":username", $_SESSION['siteusername']);
-            $stmt->execute();
-        }
 
-        if(isset($_POST['left'])) {
-            $clean = $_POST['left'];
-            $stmt = $__db->prepare("UPDATE users SET 2009_user_left = :clean WHERE username = :username");
-            $stmt->bindParam(":clean", $clean);
-            $stmt->bindParam(":username", $_SESSION['siteusername']);
-            $stmt->execute();
-        }
-
-        if(isset($_POST['right'])) {
-            $clean = $_POST['right'];
-            $stmt = $__db->prepare("UPDATE users SET 2009_user_right = :clean WHERE username = :username");
-            $stmt->bindParam(":clean", $clean);
-            $stmt->bindParam(":username", $_SESSION['siteusername']);
-            $stmt->execute();
-        }
-
-
-        if($_SERVER['REQUEST_METHOD'] == 'POST' && @$_FILES['pfpset']) {
-            if(!empty($_FILES["pfpset"]["name"])) {
-                $target_dir = "dynamic/pfp/";
-                $imageFileType = strtolower(pathinfo($_FILES["pfpset"]["name"], PATHINFO_EXTENSION));
-                $target_name = md5_file($_FILES["pfpset"]["tmp_name"]) . "." . $imageFileType;
+        if($_SERVER['REQUEST_METHOD'] == 'POST' && @$_GET['n']) {
+            if(!empty($_GET["n"]) && $_GET['n'] == "pfp") {
+                $target_dir = "../dynamic/pfp/";
+                $imageFileType = strtolower(pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION));
+                $target_name = md5_file($_FILES["file"]["tmp_name"]) . "." . $imageFileType;
         
                 $target_file = $target_dir . $target_name;
         
@@ -60,7 +37,7 @@
                 if (file_exists($target_file)) {
                     $movedFile = true;
                 } else {
-                    $movedFile = move_uploaded_file($_FILES["pfpset"]["tmp_name"], $target_file);
+                    $movedFile = move_uploaded_file($_FILES["file"]["tmp_name"], $target_file);
                 }
         
                 if ($uploadOk) {
@@ -76,7 +53,7 @@
             }
         } else if($_SERVER['REQUEST_METHOD'] == 'POST' && @$_FILES['backgroundbgset']) {
             if(!empty($_FILES["backgroundbgset"]["name"])) {
-                $target_dir = "dynamic/banners/";
+                $target_dir = "../dynamic/banners/";
                 $imageFileType = strtolower(pathinfo($_FILES["backgroundbgset"]["name"], PATHINFO_EXTENSION));
                 $target_name = md5_file($_FILES["backgroundbgset"]["tmp_name"]) . "." . $imageFileType;
     
@@ -102,7 +79,44 @@
     
                 if ($uploadOk) {
                     if ($movedFile) {
-                        $__user_u->update_row($_SESSION['siteusername'], "2009_bg", $target_name);
+                        $__user_u->update_row($_SESSION['siteusername'], "2012_bg", $target_name);
+                    } else {
+                        $fileerror = 'fatal error';
+                    }
+                }
+            }
+        } else if($_SERVER['REQUEST_METHOD'] == 'POST' && @$_FILES['watchsubset']) {
+            echo "asdas";
+            if(!empty($_FILES["watchsubset"]["name"])) {
+                echo "asdas";
+
+                $target_dir = "../dynamic/banners/";
+                $imageFileType = strtolower(pathinfo($_FILES["watchsubset"]["name"], PATHINFO_EXTENSION));
+                $target_name = md5_file($_FILES["watchsubset"]["tmp_name"]) . "." . $imageFileType;
+    
+                $target_file = $target_dir . $target_name;
+    
+                $uploadOk = true;
+                $movedFile = false;
+    
+                if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+                    && $imageFileType != "gif" ) {
+                    $fileerror = 'unsupported file type. must be jpg, png, jpeg, or gif';
+                    $uploadOk = false;
+                    goto skip;
+                }
+    
+                if($uploadOk) { 
+                    if (file_exists($target_file)) {
+                        $movedFile = true;
+                    } else {
+                        $movedFile = move_uploaded_file($_FILES["watchsubset"]["tmp_name"], $target_file);
+                    }
+                }
+    
+                if ($uploadOk) {
+                    if ($movedFile) {
+                        $__user_u->update_row($_SESSION['siteusername'], "watch_banner", $target_name);
                     } else {
                         $fileerror = 'fatal error';
                     }
@@ -110,7 +124,7 @@
             }
         } else if($_SERVER['REQUEST_METHOD'] == 'POST' && @$_POST['bannerset']) {
             if(!empty($_FILES["file"]["name"])) {
-                $target_dir = "dynamic/banners/";
+                $target_dir = "../dynamic/banners/";
                 $imageFileType = strtolower(pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION));
                 $target_name = md5_file($_FILES["file"]["tmp_name"]) . "." . $imageFileType;
     
@@ -144,7 +158,7 @@
             }
         } else if($_SERVER['REQUEST_METHOD'] == 'POST' && @$_FILES['videopagebanner']) {
             if(!empty($_FILES["videopagebanner"]["name"])) {
-                $target_dir = "dynamic/subscribe/";
+                $target_dir = "/dynamic/subscribe/";
                 $imageFileType = strtolower(pathinfo($_FILES["videopagebanner"]["name"], PATHINFO_EXTENSION));
                 $target_name = md5_file($_FILES["videopagebanner"]["tmp_name"]) . "." . $imageFileType;
     
@@ -185,6 +199,14 @@
         if(!empty($_POST['featuredchannels'])) { 
             $__user_u->update_row($_SESSION['siteusername'], "featured_channels", $_POST['featuredchannels']);
         }
+
+        if(!empty($_POST['custom_label_title'])) { 
+            $__user_u->update_row($_SESSION['siteusername'], "uploaded_videos_title", $_POST['custom_label_title']);
+        }
+
+        if(!empty($_POST['custom_label_description'])) { 
+            $__user_u->update_row($_SESSION['siteusername'], "uploaded_videos_description", $_POST['custom_label_description']);
+        }
     
         if(!empty($_POST['css'])) {
             $__user_u->update_row($_SESSION['siteusername'], "css", $_POST['css']);
@@ -195,6 +217,11 @@
         }
 
         if(!empty($_POST['solidcolor'])) {
+            $__user_u->update_row($_SESSION['siteusername'], "background_option", $_POST['bgoption']);
+
+            if($_POST['bgoption'] == "solid")
+                $__user_u->update_row($_SESSION['siteusername'], "2012_bg", "");
+
             $__user_u->update_row($_SESSION['siteusername'], "primary_color", $_POST['solidcolor']);
         }
 
@@ -242,24 +269,39 @@
             $__user_u->update_row($_SESSION['siteusername'], "primary_color_text", $_POST['textmaincolor']);
         }
 
+        if(!empty($_POST['layout_channel'])) {
+            if(
+                $_POST['layout_channel'] == "feed"      || 
+                $_POST['layout_channel'] == "featured"  || 
+                $_POST['layout_channel'] == "playlists" || 
+                $_POST['layout_channel'] == "everything"
+            )
+                $__user_u->update_row($_SESSION['siteusername'], "layout", $_POST['layout_channel']);
+        }
+
     if(!empty($_POST['bgoptionset'])) {
         $bgoption = $_POST['bgoption'];
         $bgcolor = $_POST['solidcolor'];
         $default = "default.png";
 
-        $__user_u->update_row($_SESSION['siteusername'], "2009_bgoption", $bgoption);
+        $__user_u->update_row($_SESSION['siteusername'], "background_option", $bgoption);
         
-        $__user_u->update_row($_SESSION['siteusername'], "2009_bgcolor", $bgcolor);
+        $__user_u->update_row($_SESSION['siteusername'], "2012_bgcolor", $bgcolor);
 
         if($bgoption == "solid") {
-            $__user_u->update_row($_SESSION['siteusername'], "2009_bg", $default);
+            $__user_u->update_row($_SESSION['siteusername'], "2012_bg ", $default);
         }
     }
     
     skip:
 
-    print_r($_POST);
-    print_R($_FILES);
+    $response = (object) [
+        "profile_picture" => $target_name,
+        "bio" => $_POST['bio']
+    ];
+
+    echo json_encode($response);
+    // print_r($_POST);
 
     //echo "<script>
     //window.location = '/channel_2?n=" . htmlspecialchars($_SESSION['siteusername']) . "';

@@ -3,11 +3,16 @@
 <?php require_once($_SERVER['DOCUMENT_ROOT'] . "/s/classes/time_manip.php"); ?>
 <?php require_once($_SERVER['DOCUMENT_ROOT'] . "/s/classes/user_helper.php"); ?>
 <?php require_once($_SERVER['DOCUMENT_ROOT'] . "/s/classes/video_helper.php"); ?>
-
 <?php $__video_h = new video_helper($__db); ?>
 <?php $__user_h = new user_helper($__db); ?>
 <?php $__db_h = new db_helper(); ?>
 <?php $__time_h = new time_helper(); ?>
+<?php
+	$__server->page_embeds->page_title = "SubRocks - Sign In";
+	$__server->page_embeds->page_description = "SubRocks is a site dedicated to bring back the 2012 layout of YouTube.";
+	$__server->page_embeds->page_image = "/yt/imgbin/full-size-logo.png";
+	$__server->page_embeds->page_url = "https://subrock.rocks/";
+?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -35,35 +40,29 @@
 			<div id="masthead-container"><?php require($_SERVER['DOCUMENT_ROOT'] . "/s/mod/header.php"); ?></div>
 			<div id="content-container">
 				<!-- begin content -->
-				<div id="content">
-                    <h3>Sign In to SubRocks</h3>
-                    <hr><br>
+				<div id="content" style="">
+                    <h2>Sign In to SubRocks</h2>
+                    <br>
 					<div class="www-left">
 						<b>Join the rockiest video-sharing community!</b><br>
 						Sign up now to get full access with your SubRocks account: <br><br>
 						<ul>
-							<li>&bull; &nbsp; Comment, rate, and make video responses to your favorite videos</li>
-							<li>&bull; &nbsp; Upload and share your videos with millions of other users</li>
-							<li>&bull; &nbsp; Save your favorite videos to watch and share later</li>
-							<li>&bull; &nbsp; Enter your videos into contests for fame and prizes</li>
-						</ul><br><br>
+							<li>• &nbsp; Comment, rate, and make video responses to your favorite videos</li>
+							<li>• &nbsp; Upload and share your videos with millions of other users</li>
+							<li>• &nbsp; Save your favorite videos to watch and share later</li>
+							<li>• &nbsp; Enter your videos into contests for fame and prizes</li>
+						</ul><br><a href="/sign_up">Sign up now </a> to join the SubRocks community.<br>
+<br><br>
 					</div>
 					<div class="www-right">
 						<div class="sign-in-div">
 							<form method="POST" action="/d/login">
-								<b>Username</b><br><br>
-								<input class="yt-uix-form-input-text" type="text" name="username" placeholder="Username"><br><br>
-								<b>Password</b><br><br>
-								<input class="yt-uix-form-input-text" type="password" name="password" placeholder="Password"><br><br>
+								
+								<input type="text" name="username" placeholder="Username" style="" class="yt-uix-form-input-text">
+								
+								<input class="yt-uix-form-input-text" type="password" name="password" placeholder="Password" style="margin-top: 9px;">
 
-								<input class="yt-uix-button yt-uix-button-default" type="submit" value="Login">&nbsp;&nbsp;&nbsp; or &nbsp;&nbsp;&nbsp;
-									<a style="color: white; text-decoration: none;" href="/sign_up">
-									<button type="button" class=" yt-uix-button yt-uix-button-primary yt-uix-button-size-default" href="/sign_up" role="button">
-										<span class="yt-uix-button-content">
-											Sign Up
-										</span>
-									</button>
-								</a>
+								<input class="yt-uix-button yt-uix-button-primary yt-uix-button-size-default" type="submit" value="Login" style="margin-top: 7px;">
 							</form>
 						</div>
 					</div>
@@ -204,6 +203,7 @@
 			</div>
 		</div>
 		<!-- end page -->
+<script id="www-core-js" src="/yt/jsbin/www-core-vfl1pq97W.js" data-loaded="true"></script>
 		<script id="www-core-js" src="//s.ytimg.com/yt/jsbin/www-core-vfl1pq97W.js" data-loaded="true"></script>
 		<script>
 			yt.setConfig({

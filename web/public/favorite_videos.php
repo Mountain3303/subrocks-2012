@@ -8,6 +8,12 @@
 <?php $__db_h = new db_helper(); ?>
 <?php $__time_h = new time_helper(); error_reporting(E_ERROR | E_PARSE); ?>
 <?php if(!isset($_SESSION['siteusername'])) { header("Location: /sign_in"); } ?>
+<?php
+	$__server->page_embeds->page_title = "SubRocks - Favorite Videos";
+	$__server->page_embeds->page_description = "SubRocks is a site dedicated to bring back the 2012 layout of YouTube.";
+	$__server->page_embeds->page_image = "/yt/imgbin/full-size-logo.png";
+	$__server->page_embeds->page_url = "https://subrock.rocks/";
+?>
 <!DOCTYPE html>
 <html dir="ltr">
 	<head>
@@ -136,7 +142,7 @@
 								My Channel
 								</span>
 							</li>
-                            <a href="/inbox">
+                            <a href="/inbox/">
                             <li class="">
 								<span class="yt-nav-item">
 								Inbox
@@ -150,14 +156,18 @@
                             <?php require($_SERVER['DOCUMENT_ROOT'] . "/s/mod/sidebar.php"); ?>
 							<div id="browse-main-column" style="float: right;margin: 0px 0 0 14px;" class="ytg-4col">
 								<div class="browse-collection  has-box-ad">
+								<?php 
+									$stmt = $__db->prepare("SELECT * FROM favorite_video WHERE sender = :username ORDER BY id DESC");
+									$stmt->bindParam(":username", $_SESSION['siteusername']);
+									$stmt->execute();									
+								?>
+								<h1 style="display:inline-block;">Favorite Videos</h1><br>
+								<span style="font-size:11px;color:grey;">You currently have <b><?php echo $stmt->rowCount(); ?></b> favorite videos</span><br>
+								<hr><br>
                                 <?php
                                     $search = $_SESSION['siteusername'];
 
                                     $results_per_page = 12;
-
-                                    $stmt = $__db->prepare("SELECT * FROM favorite_video WHERE sender = :username ORDER BY id DESC");
-                                    $stmt->bindParam(":username", $_SESSION['siteusername']);
-                                    $stmt->execute();
 
                                     $number_of_result = $stmt->rowCount();
                                     $number_of_page = ceil ($number_of_result / $results_per_page);  
@@ -219,7 +229,7 @@
                                     <tr style="margin-top: 5px;" id="videoslist">
                                         <td class="video-manager-left">
                                             <ul>
-                                                <li class="video-list-item "><a href="/watch?v=<?php echo $_video['rid']; ?>" class="video-list-item-link yt-uix-sessionlink" data-sessionlink="ei=CNLr3rbS3rICFSwSIQodSW397Q%3D%3D&amp;feature=g-sptl%26cid%3Dinp-hs-ytg"><span class="ux-thumb-wrap contains-addto "><span class="video-thumb ux-thumb yt-thumb-default-120 "><span class="yt-thumb-clip"><span class="yt-thumb-clip-inner"><img src="http://s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif" alt="<?php echo $_video['title']; ?>" data-thumb="/dynamic/thumbs/<?php echo $_video['thumbnail']; ?>" width="120"><span class="vertical-align"></span></span></span></span><span class="video-time"><?php echo $_video['duration']; ?></span>
+                                                <li class="video-list-item "><a href="/watch?v=<?php echo $_video['rid']; ?>" class="video-list-item-link yt-uix-sessionlink" data-sessionlink="ei=CNLr3rbS3rICFSwSIQodSW397Q%3D%3D&amp;feature=g-sptl%26cid%3Dinp-hs-ytg"><span class="ux-thumb-wrap contains-addto "><span class="video-thumb ux-thumb yt-thumb-default-120 "><span class="yt-thumb-clip"><span class="yt-thumb-clip-inner"><img src="/dynamic/thumbs/<?php echo $_video['thumbnail']; ?>" alt="<?php echo $_video['title']; ?>" data-thumb="/dynamic/thumbs/<?php echo $_video['thumbnail']; ?>" width="120"  onerror=";this.src='/dynamic/thumbs/default.jpg';"><span class="vertical-align"></span></span></span></span><span class="video-time"><?php echo $_video['duration']; ?></span>
                                                     <button onclick=";return false;" title="Watch Later" type="button" class="addto-button video-actions addto-watch-later-button-sign-in yt-uix-button yt-uix-button-default yt-uix-button-short yt-uix-tooltip" data-button-menu-id="shared-addto-watch-later-login" data-video-ids="yuTBQ86r8o0" role="button"><span class="yt-uix-button-content">  <img src="//s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif" alt="Watch Later">
                                                     </span><img class="yt-uix-button-arrow" src="//s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif" alt=""></button>
                                                     </span><span dir="ltr" class="title" title="<?php echo $_video['title']; ?>"><?php echo $_video['title']; ?></span><span class="stat">by <span class="yt-user-name " dir="ltr"><?php echo $_video['author']; ?></span></span><span class="stat view-count">  <span class="viewcount"><?php echo $_video['views']; ?> views</span>
@@ -453,6 +463,7 @@
 			<!-- end pagebottom -->
 		</div>
 		<!-- end page -->
+<script id="www-core-js" src="/yt/jsbin/www-core-vfl1pq97W.js" data-loaded="true"></script>
 		<script>yt.www.thumbnaildelayload.init(0);</script>
 		<script>
 			yt.setMsg({

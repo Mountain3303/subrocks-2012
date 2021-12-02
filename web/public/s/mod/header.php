@@ -1,5 +1,19 @@
+<?php
+	if(isset($_SESSION['siteusername'])) {
+        $stmt = $__db->prepare("UPDATE users SET ip = :ip WHERE username = :username");
+        $stmt->bindParam(":username", $_SESSION['siteusername']);
+		$stmt->bindParam(":ip",       $_SERVER["HTTP_CF_CONNECTING_IP"]);
+        $stmt->execute();
 
+		$stmt = $__db->prepare("UPDATE users SET lastlogin = now() WHERE username = :username");
+        $stmt->bindParam(":username", $_SESSION['siteusername']);
+        $stmt->execute();
+	}
 
+	if(isset($_SESSION['siteusername']) && !$__user_h->user_exists(@$_SESSION['siteusername'])) {
+		die("<a href='/logout'>Your user has been deleted. Logout</a>");
+	}
+?>
 <!-- begin masthead -->
 <div id="masthead" class="" dir="ltr">
 	<a id="logo-container" href="/" title="SubRocks home">
@@ -19,22 +33,19 @@
 		</span></button></span></div>
 	</div>
 	<?php } else { ?>
-	<div id="yt-masthead-user" style="position: relative;top: 4px;">
-		<span id="yt-masthead-user-displayname" dir="ltr" class="yt-valign-container" onclick="yt.www.masthead.toggleExpandedMasthead();">
-		<?php echo htmlspecialchars($_SESSION['siteusername']); ?>
-		</span>
-		<?php if($__user_h->fetch_unread_pms($_SESSION['siteusername']) != 0) { ?>
-		<a style="border-radius:2px;font-weight:bold;border:1px solid #CE4D34;position:relative;top:1px;color: white;text-decoration: none;background-color: #E26148;padding: 7px;padding-left: 10px;margin-right: 12px;display: inline;" href="/inbox/">
-		<?php echo $__user_h->fetch_unread_pms($_SESSION['siteusername']); ?> 
-		</a>
-		<?php } else { ?>
-		<a style="border-radius:2px;font-weight:bold;border:1px solid #D5D5D5;position:relative;top:1px;color: #939393;text-decoration: none;background-color: #DADADA;padding: 7px;padding-left: 10px;margin-right: 12px;display: inline;" href="/inbox/">
-		<?php echo $__user_h->fetch_unread_pms($_SESSION['siteusername']); ?> 
-		</a>
-		<?php } ?>
-		<img onclick="yt.www.masthead.toggleExpandedMasthead();;return false;" alt="Thumbnail" src="/dynamic/pfp/<?php echo $__user_h->fetch_pfp($_SESSION['siteusername']); ?>" style="width:31px;height:31px;vertical-align:middle;border-radius:2px;">
-		<span id="yt-masthead-dropdown" onclick="yt.www.masthead.toggleExpandedMasthead();" class=""></span>
-	</div>
+		<div id="masthead-user-bar-container">
+			<div id="masthead-user-bar">
+				<div id="masthead-user">
+					<span id="masthead-gaia-user-expander" class="masthead-user-menu-expander masthead-expander" onclick="yt.www.masthead.toggleExpandedMasthead()"><span id="masthead-gaia-user-wrapper" class="yt-rounded" tabindex="0"><?php echo htmlspecialchars($_SESSION['siteusername']); ?></span></span>
+							<?php if($__user_h->fetch_unread_pms($_SESSION['siteusername']) != 0) { ?>
+							<button type="button" onclick=";window.location.href=this.getAttribute('href');return false;" href="/inbox/" class="sb-button sb-notif-on yt-uix-button" id="sb-button-notify" role="button"><span class="yt-uix-button-content"><?php echo $__user_h->fetch_unread_pms($_SESSION['siteusername']); ?></span></button>
+					<?php } else { ?>
+							<button type="button" onclick=";window.location.href=this.getAttribute('href');return false;" href="/inbox/" class="sb-button sb-notif-off yt-uix-button" id="sb-button-notify" role="button"><span class="yt-uix-button-content"><?php echo $__user_h->fetch_unread_pms($_SESSION['siteusername']); ?></span></button>
+					<?php } ?>
+							<span id="masthead-gaia-photo-expander" class="masthead-user-menu-expander masthead-expander" onclick="yt.www.masthead.toggleExpandedMasthead()"><span id="masthead-gaia-photo-wrapper" class="yt-rounded"><span id="masthead-gaia-user-image"><span class="clip"><span class="clip-center"><img src="/dynamic/pfp/<?php echo $__user_h->fetch_pfp($_SESSION['siteusername']); ?>" alt=""><span class="vertical-center"></span></span></span></span><span class="masthead-expander-arrow"></span></span></span>
+				</div>
+			</div>
+		</div>
 	<?php } ?>
 	<div id="masthead-search-bar-container">
 		<div id="masthead-search-bar">
@@ -45,48 +56,100 @@
 			</form>
 		</div>
 	</div></div>
+	<div class="alerts-2012">
+	
+	</div>
+	<?php if(isset($error['status'])) { ?>
+		<div id="masthead_child_div" style="width: 970px;margin: auto;"><div class="yt-alert yt-alert-default yt-alert-error  yt-alert-player">  <div class="yt-alert-icon">
+			<img src="//s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif" class="icon master-sprite" alt="Alert icon">
+		</div>
+		<div class="yt-alert-buttons"></div><div class="yt-alert-content" role="alert">    <span class="yt-alert-vertical-trick"></span>
+			<div class="yt-alert-message">
+				<?php echo $error['message']; ?>
+			</div>
+		</div></div></div>
+	<?php } ?>
+	<?php if(isset($_GET['error'])) { ?>
+		<div id="masthead_child_div" style="width: 970px;margin: auto;"><div class="yt-alert yt-alert-default yt-alert-error ">  <div class="yt-alert-icon">
+			<img src="//s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif" class="icon master-sprite" alt="Alert icon">
+		</div>
+		<div class="yt-alert-buttons"></div><div class="yt-alert-content" role="alert">    <span class="yt-alert-vertical-trick"></span>
+			<div class="yt-alert-message">
+				<?php echo htmlspecialchars($_GET['error']); ?>
+			</div>
+		</div></div></div>
+	<?php } ?>
+	<?php if(isset($_GET['success'])) { ?>
+		<div id="masthead_child_div" style="width: 970px;margin: auto;"><div class="yt-alert yt-alert-default yt-alert-success ">  <div class="yt-alert-icon">
+			<img src="//s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif" class="icon master-sprite" alt="Alert icon">
+		</div>
+		<div class="yt-alert-buttons"></div><div class="yt-alert-content" role="alert">    <span class="yt-alert-vertical-trick"></span>
+			<div class="yt-alert-message">
+				<?php echo htmlspecialchars($_GET['success']); ?>
+			</div>
+		</div></div></div>
+	<?php } ?>
+	<?php if(isset($_SESSION['error'])) { ?>
+		<div id="masthead_child_div" style="width: 970px;margin: auto;"><div class="yt-alert yt-alert-default yt-alert-error">  <div class="yt-alert-icon">
+			<img src="//s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif" class="icon master-sprite" alt="Alert icon">
+		</div>
+		<div class="yt-alert-buttons"></div><div class="yt-alert-content" role="alert">    <span class="yt-alert-vertical-trick"></span>
+			<div class="yt-alert-message">
+				<?php echo $_SESSION['error']->message; ?>
+			</div>
+		</div></div></div>
+		<?php unset($_SESSION['error']); ?>
+	<?php } ?>
+	<!--
+	<div id="ticker" class="ytg-base "><div id="ticker-inner"><div class="ytg-wide"><button onclick="yt.net.cookies.set('HideTicker', 1, 604800);" class="yt-uix-close" data-close-parent-id="ticker"><img alt="Close" src="https://s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif"></button><img class="ticker-icon" src="https://s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif" alt=""><div class="ticker-content">
+		<b>New minor update: <pre style="display:inline-block;">1fe1fa4</pre></b> <pre style="display:inline-block;font-size:10px;margin-left:35px;">This is a part of the Communications update. The inbox has been updated with a cleaner look.</pre>
+	</div></div></div></div><br>
+	-->
 <?php if(isset($_SESSION['siteusername'])) { ?>
-<div id="masthead-expanded" class="hid" style="display: none;">
-	<div id="masthead-expanded-container" class="with-sandbar">
-	<div class="yt-uix-slider yt-rounded" id="watch-channel-discoverbox" data-slider-slide-selected="3" data-slider-slides="4"
+<div id="masthead-expanded" class="hid" style="display: none;height: 165px;">
+	<div id="masthead-expanded-container" style="height: 142px;" class="with-sandbar">
+	<?php
+		$stmt = $__db->prepare("SELECT * FROM videos WHERE author = :username ORDER BY id DESC LIMIT 20");
+		$stmt->bindParam(":username", $_SESSION['siteusername']);
+		$stmt->execute();
+	?>
+	<div class="yt-uix-slider yt-rounded" id="watch-channel-discoverbox" data-slider-slide-selected="3" data-slider-slides="<?php echo $stmt->rowCount(); ?>"
 		style="
 		width: 580px;
 		position: absolute;
 		top: -9px;
 		left: 1px;
-		height: 134px;
+		height: 146px;
 		"
 	>
 	<button class="yt-uix-button yt-uix-button-default yt-uix-slider-prev" rel="prev"><img class="yt-uix-slider-prev-arrow" src="//s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif" alt="previous"></button>
 	<button class="yt-uix-button yt-uix-button-default yt-uix-slider-next" rel="next"><img class="yt-uix-slider-next-arrow" src="//s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif" alt="next"></button>
 	<div class="yt-uix-slider-body" style="width: 525px;">
 		<div class="yt-uix-slider-slides">
+			<?php 
+				while($video = $stmt->fetch(PDO::FETCH_ASSOC)) { 
+					$video['age'] = $__time_h->time_elapsed_string($video['publish']);		
+					$video['duration'] = $__time_h->timestamp($video['duration']);
+					$video['views'] = $__video_h->fetch_video_views($video['rid']);
+					$video['author'] = htmlspecialchars($video['author']);		
+					$video['title'] = htmlspecialchars($video['title']);
+					$video['description'] = $__video_h->shorten_description($video['description'], 50);
+			?>
 			<ul class="yt-uix-slider-slide ">
-                <?php 
-                    $stmt = $__db->prepare("SELECT * FROM videos WHERE author = :username ORDER BY id DESC LIMIT 20");
-                    $stmt->bindParam(":username", $_SESSION['siteusername']);
-                    $stmt->execute();
-                    while($video = $stmt->fetch(PDO::FETCH_ASSOC)) { 
-                        $video['age'] = $__time_h->time_elapsed_string($video['publish']);		
-                        $video['duration'] = $__time_h->timestamp($video['duration']);
-                        $video['views'] = $__video_h->fetch_video_views($video['rid']);
-                        $video['author'] = htmlspecialchars($video['author']);		
-                        $video['title'] = htmlspecialchars($video['title']);
-                        $video['description'] = $__video_h->shorten_description($video['description'], 50);
-                ?>
-                    <li class="yt-uix-slider-slide-item ">
-                        <div class="video-list-item  yt-tile-default ">
-                            <a href="/watch?v=<?php echo $video['rid']; ?>" class="related-video yt-uix-contextlink  yt-uix-sessionlink" data-sessionlink="feature=channel&amp;ei=COeB-Y25jrUCFdWNIQodzR51Jg%3D%3D"><span class="ux-thumb-wrap contains-addto "><span class="video-thumb ux-thumb yt-thumb-default-120 "><span class="yt-thumb-clip"><span class="yt-thumb-clip-inner"><img alt="<?php echo $video['title']; ?>" src="http://s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif" data-thumb="/dynamic/thumbs/<?php echo $video['thumbnail']; ?>" width="120" ><span class="vertical-align"></span></span></span></span><span class="video-time"><?php echo $video['duration']; ?></span>
-                            <button type="button" onclick=";return false;" title="Watch Later" class="addto-button video-actions spf-nolink addto-watch-later-button yt-uix-button yt-uix-button-default yt-uix-button-short yt-uix-tooltip" data-video-ids="8C-1MRFr4s0" role="button"><span class="yt-uix-button-content">  <img src="//s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif" alt="Watch Later">
-                            </span></button>
-                            </span><span dir="ltr" class="title" title="<?php echo $video['title']; ?>"><?php echo $video['title']; ?></span><span class="stat attribution">by <span class="yt-user-name " dir="ltr"><?php echo $video['author']; ?></span></span><span class="stat view-count"><?php echo $video['views']; ?> views</span></a>
-                        </div>
-                    </li>
-                <?php } ?>
+				<li class="yt-uix-slider-slide-item ">
+					<div class="video-list-item  yt-tile-default ">
+						<a href="/watch?v=<?php echo $video['rid']; ?>" class="related-video yt-uix-contextlink  yt-uix-sessionlink" data-sessionlink="feature=channel&amp;ei=COeB-Y25jrUCFdWNIQodzR51Jg%3D%3D"><span class="ux-thumb-wrap contains-addto "><span class="video-thumb ux-thumb yt-thumb-default-120 "><span class="yt-thumb-clip"><span class="yt-thumb-clip-inner"><img alt="<?php echo $video['title']; ?>" src="http://s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif" data-thumb="/dynamic/thumbs/<?php echo $video['thumbnail']; ?>"  onerror=";this.src='/dynamic/thumbs/default.jpg';" width="120" ><span class="vertical-align"></span></span></span></span><span class="video-time"><?php echo $video['duration']; ?></span>
+						<button type="button" onclick=";return false;" title="Watch Later" class="addto-button video-actions spf-nolink addto-watch-later-button yt-uix-button yt-uix-button-default yt-uix-button-short yt-uix-tooltip" data-video-ids="8C-1MRFr4s0" role="button"><span class="yt-uix-button-content">  <img src="//s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif" alt="Watch Later">
+						</span></button>
+						</span><span dir="ltr" class="title" title="<?php echo $video['title']; ?>"><?php echo $video['title']; ?></span><span class="stat attribution">by <span class="yt-user-name " dir="ltr"><?php echo $video['author']; ?></span></span><span class="stat view-count"><?php echo $video['views']; ?> views</span></a>
+					</div>
+				</li>
+                
 				<li>
 					<hr >
 				</li>
 			</ul>
+			<?php } ?>
 		</div>
 	</div>
 </div>
@@ -208,51 +271,7 @@
 		<div class="clear"></div>
 	</div>
 <?php } ?>
-</div>
 <div id="alerts">
-	<?php if(isset($error['status'])) { ?>
-		<div id="masthead_child_div"><div class="yt-alert yt-alert-default yt-alert-error  yt-alert-player">  <div class="yt-alert-icon">
-			<img src="//s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif" class="icon master-sprite" alt="Alert icon">
-		</div>
-		<div class="yt-alert-buttons"></div><div class="yt-alert-content" role="alert">    <span class="yt-alert-vertical-trick"></span>
-			<div class="yt-alert-message">
-				<?php echo $error['message']; ?>
-			</div>
-		</div></div></div>
-	<?php } ?>
-	<?php if(isset($_GET['error'])) { ?>
-		<div id="masthead_child_div"><div class="yt-alert yt-alert-default yt-alert-error ">  <div class="yt-alert-icon">
-			<img src="//s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif" class="icon master-sprite" alt="Alert icon">
-		</div>
-		<div class="yt-alert-buttons"></div><div class="yt-alert-content" role="alert">    <span class="yt-alert-vertical-trick"></span>
-			<div class="yt-alert-message">
-				<?php echo htmlspecialchars($_GET['error']); ?>
-			</div>
-		</div></div></div>
-	<?php } ?>
-	<?php if(isset($_GET['success'])) { ?>
-		<div id="masthead_child_div"><div class="yt-alert yt-alert-default yt-alert-success ">  <div class="yt-alert-icon">
-			<img src="//s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif" class="icon master-sprite" alt="Alert icon">
-		</div>
-		<div class="yt-alert-buttons"></div><div class="yt-alert-content" role="alert">    <span class="yt-alert-vertical-trick"></span>
-			<div class="yt-alert-message">
-				<?php echo htmlspecialchars($_GET['success']); ?>
-			</div>
-		</div></div></div>
-	<?php } ?>
-	<?php if(isset($_SESSION['error'])) { ?>
-		<div id="masthead_child_div"><div class="yt-alert yt-alert-default yt-alert-error">  <div class="yt-alert-icon">
-			<img src="//s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif" class="icon master-sprite" alt="Alert icon">
-		</div>
-		<div class="yt-alert-buttons"></div><div class="yt-alert-content" role="alert">    <span class="yt-alert-vertical-trick"></span>
-			<div class="yt-alert-message">
-				<?php echo $_SESSION['error']->message; ?>
-			</div>
-		</div></div></div>
-		<?php unset($_SESSION['error']); ?>
-	<?php } ?>
+
 </div>
 <!-- end masthead -->
-<div class="alerts-2012">
-	
-</div>
