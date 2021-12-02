@@ -25,7 +25,7 @@
         -->
         </span>
 		<div class="yt-uix-slider-title">
-			<h2><a href="/channel_videos?n=<?php echo htmlspecialchars($_video['author']); ?>">See all <?php echo $__video_h->fetch_user_videos($_video['author']); ?> videos
+			<h2><a href="/user/<?php echo htmlspecialchars($_video['author']); ?>/videos">See all <?php echo $__video_h->fetch_user_videos($_video['author']); ?> videos
 				&raquo;</a>
 			</h2>
 		</div>
